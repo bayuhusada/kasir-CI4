@@ -44,4 +44,46 @@ class Barang extends BaseController
         ]);
         return redirect()->to('/barang')->with('message', 'Barang berhasil ditambahkan');   
     }
+
+public function edit($id)
+{
+    // Ambil data barang berdasarkan ID
+    $barang = $this->barangModel->find($id);
+
+    // Jika tidak ditemukan, redirect dengan pesan error
+    if (!$barang) {
+        return redirect()->to('/barang')->with('error', 'Data tidak ditemukan');
+    }
+
+    return view('barang/edit', ['barang' => $barang]);
+}
+
+public function update($id)
+{
+    // Validasi input
+    if (!$this->validate([
+        'nama_barang' => 'required|min_length[3]',
+        'harga' => 'required|numeric',
+        'stok' => 'required|integer',
+    ])) {
+        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+    }
+
+    // Update data barang berdasarkan ID
+    $this->barangModel->update($id, [
+        'nama_barang' => $this->request->getPost('nama_barang'),
+        'harga' => $this->request->getPost('harga'),
+        'stok' => $this->request->getPost('stok'),
+    ]);
+
+    return redirect()->to('/barang')->with('message', 'Barang berhasil diperbarui');
+}
+
+public function delete($id)
+{
+    // Hapus barang berdasarkan ID
+    $this->barangModel->delete($id);
+    return redirect()->to('/barang')->with('message', 'Barang berhasil dihapus');
+}
+
 }

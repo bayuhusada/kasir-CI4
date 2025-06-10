@@ -12,6 +12,7 @@
       <th>Nama Barang</th>
       <th>Harga</th>
       <th>Stok</th>
+      <th>Aksi</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +22,10 @@
         <td><?= esc($item['nama_barang']) ?></td>
         <td><?= esc($item['harga']) ?></td>
         <td><?= esc($item['stok']) ?></td>
+        <td>
+          <a href="/barang/edit/<?= $item['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+          <a href="/barang/delete/<?= $item['id'] ?>" class="btn btn-sm btn-danger">Delete</a>
+        </td>
       </tr>
     <?php endforeach; ?>
   </tbody>
