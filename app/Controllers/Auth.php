@@ -40,9 +40,9 @@ public function doLogin()
 
         // Redirect sesuai role
         if ($user['role'] === 'admin') {
-            return redirect()->to('/barang');
+            return redirect()->to('/barang')->with('message', 'Selamat datang, ' . $user['username']);
         } else {
-            return redirect()->to('/kasir');
+            return redirect()->to('/kasir')->with('message', 'Selamat datang, ' . $user['username']);
         }
     }
 

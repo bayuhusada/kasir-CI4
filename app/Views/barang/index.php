@@ -2,6 +2,12 @@
 
 <?= $this->section('content') ?>
 
+<nav class="navbar bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Default</a>
+    <a class="btn btn-md btn-danger" href="/logout">Logout</a>
+  </div>
+</nav>
 <h1>Data Barang</h1>
 <a href="/barang/create" class="btn btn-primary mb-3">Tambah Barang Baru</a>
 

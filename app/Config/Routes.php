@@ -1,7 +1,7 @@
 <?php
 
 use CodeIgniter\Router\RouteCollection;
-
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * @var RouteCollection $routes
@@ -24,5 +24,9 @@ $routes->group('barang', ['filter' => 'auth:admin'], function($routes) {
 });
 
 // Hanya kasir yang bisa akses kasir
-$routes->get('/kasir', 'Kasir::index', ['filter' => 'auth:kasir']);
+$routes->group('kasir', ['filter' => 'auth:kasir'], function($routes) {
+    $routes->get('', 'Kasir::index');
+    $routes->post('simpanTransaksi', 'Kasir::simpanTransaksi');
+});
+
 
