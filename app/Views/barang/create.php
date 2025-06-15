@@ -21,7 +21,11 @@
   </div>
   <div class="mb-3">
     <label for="harga" class="form-label">Harga:</label>
-    <input type="number" name="harga" id="harga" class="form-control" value="<?= old('harga') ?>" required>
+    <!-- Input yang terlihat oleh user -->
+    <input type="text" id="harga_format" class="form-control" placeholder="Rp 0" onkeyup="formatRupiah(this)">
+    <!-- Input ke BE -->
+    <input type="hidden" name="harga" id="harga">
+
   </div>
   <div class="mb-3">
     <label for="stok" class="form-label">Stok:</label>
@@ -30,4 +34,26 @@
   <button type="submit" class="btn btn-success">Simpan</button>
   <a href="<?= site_url('barang') ?>" class="btn btn-secondary ms-2">Kembali</a>
 </form>
+
+<script>
+function formatRupiah(input) {
+  let angka = input.value.replace(/[^,\d]/g, '').toString();
+  let split = angka.split(',');
+  let sisa = split[0].length % 3;
+  let rupiah = split[0].substr(0, sisa);
+  let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+  if (ribuan) {
+    let separator = sisa ? '.' : '';
+    rupiah += separator + ribuan.join('.');
+  }
+
+  rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+  input.value = 'Rp ' + rupiah;
+
+  // Simpan nilai tanpa Rp dan titik ke input hidden
+  document.getElementById('harga').value = angka.replace(/\./g, '');
+}
+</script>
+
 <?= $this->endSection() ?>

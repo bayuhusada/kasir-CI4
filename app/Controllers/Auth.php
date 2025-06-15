@@ -40,13 +40,16 @@ public function doLogin()
 
         // Redirect sesuai role
         if ($user['role'] === 'admin') {
+            session()->setFlashdata('success','login berhasil');
             return redirect()->to('/barang')->with('message', 'Selamat datang, ' . $user['username']);
         } else {
+            session()->setFlashdata('success','login berhasil');
             return redirect()->to('/kasir')->with('message', 'Selamat datang, ' . $user['username']);
         }
     }
 
     // Jika gagal login
+    session()->setFlashdata('error', 'Username atau password salah');
     return redirect()->back()->withInput()->with('error', 'Username atau password salah');
 }
 

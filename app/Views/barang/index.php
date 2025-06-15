@@ -6,6 +6,7 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Default</a>
     <a class="btn btn-md btn-danger" href="/logout">Logout</a>
+    <a class="btn btn-md btn-danger" href="<?= base_url('/riwayat') ?>">History</a>
   </div>
 </nav>
 <h1>Data Barang</h1>
@@ -26,15 +27,33 @@
       <tr>
         <td><?= esc($item['id']) ?></td>
         <td><?= esc($item['nama_barang']) ?></td>
-        <td><?= esc($item['harga']) ?></td>
+        <td>Rp<?= number_format($item['harga'], 2, ',', '.') ?></td>
         <td><?= esc($item['stok']) ?></td>
         <td>
           <a href="/barang/edit/<?= $item['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-          <a href="/barang/delete/<?= $item['id'] ?>" class="btn btn-sm btn-danger">Delete</a>
+          <a href="#" onclick="confirmDelete(<?= $item['id'] ?>)" class="btn btn-sm btn-danger">Delete</a>
         </td>
       </tr>
     <?php endforeach; ?>
   </tbody>
 </table>
+
+
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/barang/delete/" + id;
+            }
+        });
+    }
+</script>
 
 <?= $this->endSection() ?>

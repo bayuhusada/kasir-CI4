@@ -23,6 +23,8 @@ $routes->group('barang', ['filter' => 'auth:admin'], function($routes) {
     $routes->get('delete/(:num)', 'Barang::delete/$1');
 });
 
+$routes->get('/riwayat', 'RiwayatTransaksi::index', ['filter' => 'auth:admin']);
+
 // Hanya kasir yang bisa akses kasir
 $routes->group('kasir', ['filter' => 'auth:kasir'], function($routes) {
     $routes->get('', 'Kasir::index');

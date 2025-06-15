@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\BarangModel;
+use App\Models\DetailTransaksiModel;
 use App\Models\TransaksiModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -19,38 +20,51 @@ class Kasir extends BaseController
         ]);
     }
 
-    public function simpanTransaksi()
+public function simpanTransaksi()
 {
-    $barang_ids = $this->request->getPost('barang_id');
-    $qyts = $this->request->getPost('qyt');
+    $barang_ids = explode(',', $this->request->getPost('barang_id_list')[0]);
+    $qtys = explode(',', $this->request->getPost('qty_list')[0]);
+    $total = $this->request->getPost('total');
     $tanggal = date('Y-m-d H:i:s');
 
-    $barangModel = new \App\Models\BarangModel();
-    $transaksiModel = new \App\Models\TransaksiModel();
+    $transaksiModel = new TransaksiModel();
+    $detailModel = new DetailTransaksiModel();
+    $barangModel = new BarangModel();
 
+    // Simpan ke tabel transaksi (parent)
+    $transaksiId = $transaksiModel->insert([
+        'jumlah' => $total,
+        'tanggal' => $tanggal,
+    ]);
+
+    // Simpan detail transaksi
     for ($i = 0; $i < count($barang_ids); $i++) {
-        $barang = $barangModel->find($barang_ids[$i]);
+    $barang = $barangModel->find($barang_ids[$i]);
 
-        if ($barang) {
-            $qyt = (int)$qyts[$i];
-            $total = $barang['harga'] * $qyt;
+    if ($barang) {
+        $qty = (int) $qtys[$i];
 
-            // Simpan transaksi
-            $transaksiModel->save([
-                'barang_id' => $barang_ids[$i],
-                'qyt' => $qyt,
-                'total' => $total,
-                'tanggal' => $tanggal
-            ]);
-
-            // Kurangi stok
-            $barangModel->update($barang_ids[$i], [
-                'stok' => $barang['stok'] - $qyt
-            ]);
+        if ($qty > $barang['stok']) {
+            session()->setFlashdata('error', 'Stok barang "' . $barang['nama_barang'] . '" tidak mencukupi.');
+            return redirect()->to('/kasir')->with('error', 'Stok barang "' . $barang['nama_barang'] . '" tidak mencukupi.');
         }
-    }
 
-    return redirect()->to('/kasir')->with('success', 'Transaksi berhasil disimpan.');
+        $detailModel->insert([
+            'transaksi_id' => $transaksiId,
+            'barang_id' => $barang_ids[$i],
+            'qty' => $qty,
+            'subtotal' => $barang['harga'] * $qty,
+        ]);
+
+        $barangModel->update($barang_ids[$i], [
+            'stok' => $barang['stok'] - $qty,
+        ]);
+    }
 }
+
+    session()->setFlashdata('success', 'Transaksi berhasil disimpan.');
+    return redirect()->to('/kasir')->with('success', 'Transaksi berhasil.');
+}
+
 
 }

@@ -42,6 +42,7 @@ class Barang extends BaseController
             'harga' => $this->request->getPost('harga'),
             'stok' => $this->request->getPost('stok'),
         ]);
+        session()->setFlashdata('success', 'Barang berhasil ditambahkan');
         return redirect()->to('/barang')->with('message', 'Barang berhasil ditambahkan');   
     }
 
@@ -75,7 +76,7 @@ public function update($id)
         'harga' => $this->request->getPost('harga'),
         'stok' => $this->request->getPost('stok'),
     ]);
-
+    session()->setFlashdata('success', 'Barang berhasil diperbarui');
     return redirect()->to('/barang')->with('message', 'Barang berhasil diperbarui');
 }
 
@@ -83,6 +84,7 @@ public function delete($id)
 {
     // Hapus barang berdasarkan ID
     $this->barangModel->delete($id);
+    session()->setFlashdata('success', 'Barang berhasil dihapus');
     return redirect()->to('/barang')->with('message', 'Barang berhasil dihapus');
 }
 
