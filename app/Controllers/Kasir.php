@@ -24,16 +24,29 @@ public function simpanTransaksi()
 {
     $barang_ids = explode(',', $this->request->getPost('barang_id_list')[0]);
     $qtys = explode(',', $this->request->getPost('qty_list')[0]);
-    $total = $this->request->getPost('total');
     $tanggal = date('Y-m-d H:i:s');
 
     $transaksiModel = new TransaksiModel();
     $detailModel = new DetailTransaksiModel();
     $barangModel = new BarangModel();
 
+    $totalKeseluruhan = 0;
+       // Hitung total keseluruhan terlebih dahulu
+    $totalKeseluruhan = 0;
+for ($i = 0; $i < count($barang_ids); $i++) {
+    $barang = $barangModel->find((int)$barang_ids[$i]);
+    if ($barang) {
+        $qty = (int)$qtys[$i];
+        $subtotal = $barang['harga'] * $qty;
+        $totalKeseluruhan += $subtotal;
+    }
+}
+
+
+
     // Simpan ke tabel transaksi (parent)
     $transaksiId = $transaksiModel->insert([
-        'jumlah' => $total,
+        'total' => $totalKeseluruhan,
         'tanggal' => $tanggal,
     ]);
 
@@ -53,7 +66,7 @@ public function simpanTransaksi()
             'transaksi_id' => $transaksiId,
             'barang_id' => $barang_ids[$i],
             'qty' => $qty,
-            'subtotal' => $barang['harga'] * $qty,
+            'total' => $barang['harga'] * $qty,
         ]);
 
         $barangModel->update($barang_ids[$i], [

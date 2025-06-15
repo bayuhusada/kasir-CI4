@@ -2,77 +2,87 @@
 
 <?= $this->section('content') ?>
 
-<nav class="navbar bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Default</a>
-    <a class="btn btn-md btn-danger" href="/logout">Logout</a>
-    <a class="btn btn-md btn-danger" href="/riwayat">History</a>
-  </div>
-</nav>
+<div class="bg-[#F5EFE7] min-h-screen px-6 py-8">
+    <!-- Header -->
+    <nav class="flex justify-between items-center bg-[#213555] text-white px-6 py-3 rounded-md mb-6">
+        <div class="text-xl font-semibold">Kasir App</div>
+        <a class="bg-[#D8C4B6] text-[#213555] px-4 py-2 rounded-md hover:bg-[#cbb4a9] transition" href="/logout">Logout</a>
+    </nav>
 
-<div class="card p-4 mb-4">
-    <h4>Input Barang</h4>
-    <div class="row">
-        <div class="col-md-6">
-            <label>Barang</label>
-            <select id="barangSelect" class="form-select">
-                <option value="">-- Pilih Barang --</option>
-                <?php foreach ($barang as $b): ?>
-                    <option 
-                        value="<?= $b['id'] ?>" 
-                        data-nama="<?= $b['nama_barang'] ?>" 
-                        data-harga="<?= $b['harga'] ?>" 
-                        data-stok="<?= $b['stok'] ?>">
-                        <?= $b['nama_barang'] ?> (Stok: <?= $b['stok'] ?>)
-                    </option>
-                <?php endforeach ?>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label>Qty</label>
-            <input type="number" id="qtyInput" class="form-control" min="1">
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="button" class="btn btn-primary w-100" id="addBarangBtn">+ Tambah</button>
+    <!-- Form Input Barang -->
+    <div class="bg-white p-6 rounded-md shadow-md border mb-6">
+        <h2 class="text-lg font-semibold text-[#213555] mb-4">Input Barang</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm text-gray-700 mb-1">Barang</label>
+                <select id="barangSelect" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                    <option value="">-- Pilih Barang --</option>
+                    <?php foreach ($barang as $b): ?>
+                        <option 
+                            value="<?= $b['id'] ?>" 
+                            data-nama="<?= $b['nama_barang'] ?>" 
+                            data-harga="<?= $b['harga'] ?>" 
+                            data-stok="<?= $b['stok'] ?>">
+                            <?= $b['nama_barang'] ?> (Stok: <?= $b['stok'] ?>)
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-700 mb-1">Qty</label>
+                <input type="number" id="qtyInput" min="1" class="w-full border border-gray-300 rounded-md px-3 py-2">
+            </div>
+            <div class="flex items-end">
+                <button type="button" id="addBarangBtn" class="w-full bg-[#3E5879] text-white px-4 py-2 rounded-md hover:bg-[#324966] transition">
+                    + Tambah
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- Tabel Transaksi -->
+    <form method="post" action="/kasir/simpanTransaksi" id="formTransaksi">
+        <div class="bg-white p-6 rounded-md shadow-md border">
+            <h2 class="text-lg font-semibold text-[#213555] mb-4">Daftar Barang Dibeli</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border border-gray-300">
+                    <thead class="bg-[#213555] text-white">
+                        <tr>
+                            <th class="px-4 py-2">Nama Barang</th>
+                            <th class="px-4 py-2">Harga</th>
+                            <th class="px-4 py-2">Qty</th>
+                            <th class="px-4 py-2">Subtotal</th>
+                            <th class="px-4 py-2">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daftarBarangTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Data barang masuk sini -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-[#F5EFE7]">
+                            <td colspan="3" class="text-right font-semibold px-4 py-2">Total</td>
+                            <td class="px-4 py-2" id="totalText">Rp 0</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Hidden input untuk backend -->
+            <input type="hidden" name="barang_id_list[]" id="barangIds">
+            <input type="hidden" name="qty_list[]" id="qtys">
+
+            <div class="mt-4 flex justify-end">
+                <button type="submit" class="bg-[#D8C4B6] text-[#213555] px-6 py-2 rounded-md hover:bg-[#c7b3a4] transition">
+                    Simpan Transaksi
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 
-<form method="post" action="/kasir/simpanTransaksi" id="formTransaksi">
-    <h4>Daftar Barang Dibeli</h4>
-    <table class="table table-bordered" id="daftarBarangTable">
-        <thead>
-            <tr>
-                <th>Nama Barang</th>
-                <th>Harga</th>
-                <th>Qty</th>
-                <th>Subtotal</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="text-end"><strong>Total</strong></td>
-                <td><span id="totalText">0</span></td>
-                <td></td>
-            </tr>
-        </tfoot>
-    </table>
-
-    <!-- Input tersembunyi untuk data -->
-    <input type="hidden" name="barang_id_list[]" id="barangIds">
-    <input type="hidden" name="qty_list[]" id="qtys">
-    <input type="hidden" name="total" id="totalHidden">
-
-    <button type="submit" class="btn btn-success">Simpan Transaksi</button>
-</form>
-
-
-
-
 <script>
-const daftarTable = document.querySelector('#daftarBarangTable tbody');
+const daftarTable = document.querySelector('#daftarBarangTable');
 const totalText = document.getElementById('totalText');
 const barangSelect = document.getElementById('barangSelect');
 const qtyInput = document.getElementById('qtyInput');
@@ -93,9 +103,8 @@ function formatRupiah(angka) {
   }
 
   rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
-  return 'Rp' + rupiah;
+  return 'Rp ' + rupiah;
 }
-
 
 function updateTable() {
     daftarTable.innerHTML = '';
@@ -107,19 +116,19 @@ function updateTable() {
 
         daftarTable.innerHTML += `
             <tr>
-                <td>${item.nama}</td>
-                <td>${formatRupiah(item.harga)}</td>
-                <td>${item.qty}</td>
-                <td>${formatRupiah(subtotal)}</td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="hapusBarang(${index})">Hapus</button></td>
+                <td class="px-4 py-2">${item.nama}</td>
+                <td class="px-4 py-2">${formatRupiah(item.harga)}</td>
+                <td class="px-4 py-2">${item.qty}</td>
+                <td class="px-4 py-2">${formatRupiah(subtotal)}</td>
+                <td class="px-4 py-2">
+                    <button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="hapusBarang(${index})">Hapus</button>
+                </td>
             </tr>
         `;
     });
 
-    totalText.innerText = total;
-    document.getElementById('totalHidden').value = total;
+    totalText.innerText = formatRupiah(total);
 
-    // Simpan ID dan QTY untuk backend
     document.getElementById('barangIds').value = barangList.map(b => b.id).join(',');
     document.getElementById('qtys').value = barangList.map(b => b.qty).join(',');
 }
@@ -133,10 +142,7 @@ addBtn.addEventListener('click', () => {
     const qty = parseInt(qtyInput.value);
 
     if (!id || qty < 1) return alert('Barang dan qty harus diisi.');
-
-    if (qty > stok) {
-        return alert(`Stok barang "${nama}" hanya tersedia ${stok}.`);
-    }
+    if (qty > stok) return alert(`Stok barang "${nama}" hanya tersedia ${stok}.`);
 
     barangList.push({ id, nama, harga, qty });
     updateTable();
@@ -145,12 +151,10 @@ addBtn.addEventListener('click', () => {
     qtyInput.value = '';
 });
 
-
 function hapusBarang(index) {
     barangList.splice(index, 1);
     updateTable();
 }
 </script>
-
 
 <?= $this->endSection() ?>
